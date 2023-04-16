@@ -18,6 +18,6 @@ import { AuthController } from './controllers/auth.controller';
     }),
   ],
   controllers: [UsersController, AuthController],
-  providers: [CreateUserService, JwtStrategy, SignInService],
+  providers: [CreateUserService, SignInService, JwtStrategy],
 })
 export class HttpModule {}
