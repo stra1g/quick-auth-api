@@ -20,7 +20,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@infra/*": ["infra/*"],
-      "@helpers/*": ["helpers/*"]
+      "@helpers/*": ["helpers/*"],
+      "@app/*": ["app/*"],
     }
   }
 }
