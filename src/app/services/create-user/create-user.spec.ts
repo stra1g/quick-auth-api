@@ -23,10 +23,12 @@ describe('Create user service', () => {
       password: 'Aa123456#',
     };
 
+    const createMethod = jest.spyOn(usersRepository, 'create');
     usersRepository.create.mockResolvedValue(undefined);
 
     const { user } = await service.run(dto);
 
+    expect(createMethod).toHaveBeenCalled();
     expect(user).toHaveProperty('id');
     expect(user).toHaveProperty('first_name');
     expect(user.first_name).toBe(dto.first_name);
