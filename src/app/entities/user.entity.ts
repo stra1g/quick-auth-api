@@ -79,7 +79,7 @@ export class User {
     if (!isValid) throw new Error('Invalid password');
 
     const hashedPassword = makeHash(password);
-    this.props.password = password;
+    this.props.password = hashedPassword;
   }
 
   private validatePassword(password: string) {
