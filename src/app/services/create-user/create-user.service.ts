@@ -1,5 +1,6 @@
 import { UsersOutputWithoutSensitive } from '@app/interfaces/user.interface';
 import { UsersRepository } from '@app/repositories/users.repository';
+import { makeHash } from '@helpers/hash';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 interface CreateUserRequest {
@@ -25,7 +26,10 @@ export class CreateUserService {
     if (emailAlreadyExists)
       throw new BadRequestException('Email already exists');
 
-    const user = await this.usersRepository.create(payload);
+    const user = await this.usersRepository.create({
+      ...payload,
+      password: makeHash(payload.password),
+    });
 
     return {
       user: {
