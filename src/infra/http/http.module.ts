@@ -6,6 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '@infra/auth/strategies/jwt.strategy';
 import { SignInService } from '@app/services/sign-in/sign-in.service';
 import { AuthController } from './controllers/auth.controller';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from '@infra/auth/strategies/google.strategy';
 
 @Module({
   imports: [
@@ -16,8 +18,11 @@ import { AuthController } from './controllers/auth.controller';
         expiresIn: '300s', // 5 minutes
       },
     }),
+    PassportModule.register({
+      session: true,
+    }),
   ],
   controllers: [UsersController, AuthController],
-  providers: [CreateUserService, SignInService, JwtStrategy],
+  providers: [CreateUserService, SignInService, JwtStrategy, GoogleStrategy],
 })
 export class HttpModule {}
