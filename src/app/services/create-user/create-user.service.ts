@@ -1,6 +1,6 @@
-import { User } from '@app/entities/user.entity';
+import { UsersOutputWithoutSensitive } from '@app/interfaces/user.interface';
 import { UsersRepository } from '@app/repositories/users.repository';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 interface CreateUserRequest {
   first_name: string;
@@ -10,7 +10,7 @@ interface CreateUserRequest {
 }
 
 interface CreateUserResponse {
-  user: User;
+  user: UsersOutputWithoutSensitive;
 }
 
 @Injectable()
@@ -18,10 +18,22 @@ export class CreateUserService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   public async run(payload: CreateUserRequest): Promise<CreateUserResponse> {
-    const user = new User(payload);
+    const emailAlreadyExists = await this.usersRepository.findByEmail(
+      payload.email,
+    );
 
-    await this.usersRepository.create(user);
+    if (emailAlreadyExists)
+      throw new BadRequestException('Email already exists');
 
-    return { user };
+    const user = await this.usersRepository.create(payload);
+
+    return {
+      user: {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        id: user.id,
+      },
+    };
   }
 }

@@ -1,5 +1,10 @@
-import { User } from 'app/entities/user.entity';
+import {
+  CreateUsersInput,
+  UsersOutputWithoutSensitive,
+  User,
+} from '@app/interfaces/user.interface';
 
 export abstract class UsersRepository {
-  abstract create(user: User): Promise<void>;
+  abstract create(data: CreateUsersInput): Promise<UsersOutputWithoutSensitive>;
+  abstract findByEmail(email: string): Promise<User | undefined>;
 }
