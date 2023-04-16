@@ -1,7 +1,9 @@
 import { UsersRepository } from '@app/repositories/users.repository';
 import { CreateUserService } from './create-user.service';
+import { randomUUID } from 'crypto';
+import { makeHash } from '@helpers/hash';
 
-type MockUsersRepository = UsersRepository & { create: jest.Mock };
+type MockUsersRepository = jest.Mocked<UsersRepository>;
 
 describe('Create user service', () => {
   let service: CreateUserService;
@@ -10,9 +12,30 @@ describe('Create user service', () => {
   beforeEach(() => {
     usersRepository = {
       create: jest.fn(),
+      findByEmail: jest.fn(),
     } as unknown as MockUsersRepository;
 
     service = new CreateUserService(usersRepository);
+  });
+
+  it('should not be able to create a new user with an existing email', async () => {
+    const dto = {
+      first_name: 'John',
+      last_name: 'Doe',
+      email: 'existing@mail.com',
+      password: 'Aa123456#',
+    };
+
+    const findByEmailMethod = jest.spyOn(usersRepository, 'findByEmail');
+    usersRepository.findByEmail.mockResolvedValue({
+      id: randomUUID(),
+      ...dto,
+      password: makeHash(dto.password),
+      created_at: new Date(),
+    });
+
+    expect(() => service.run(dto)).rejects.toThrowError();
+    expect(findByEmailMethod).toHaveBeenCalled();
   });
 
   it('should be able to create a new user', async () => {
@@ -23,8 +46,16 @@ describe('Create user service', () => {
       password: 'Aa123456#',
     };
 
+    usersRepository.findByEmail.mockResolvedValue(undefined);
+
+    const mockUserReturn = {
+      id: randomUUID(),
+      ...dto,
+      password: makeHash(dto.password),
+      created_at: new Date(),
+    };
     const createMethod = jest.spyOn(usersRepository, 'create');
-    usersRepository.create.mockResolvedValue(undefined);
+    usersRepository.create.mockResolvedValue(mockUserReturn);
 
     const { user } = await service.run(dto);
 
@@ -36,9 +67,7 @@ describe('Create user service', () => {
     expect(user.last_name).toBe(dto.last_name);
     expect(user).toHaveProperty('email');
     expect(user.email).toBe(dto.email);
-    expect(user).toHaveProperty('password');
-    expect(user.password).not.toBe(dto.password); // password must be hashed
-    expect(user).toHaveProperty('created_at');
-    expect(user.created_at).toBeInstanceOf(Date);
+    expect(user).not.toHaveProperty('password');
+    expect(user).not.toHaveProperty('created_at');
   });
 });
