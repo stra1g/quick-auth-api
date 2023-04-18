@@ -16,12 +16,6 @@
   <img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white" />
 </p>
 
-
-
-## Description
-
-A server-side application used to handle authentication and authorization of users. 
-
 ## Table of contents
 * [Use Cases](#use-cases)
 * [Technologies](#technologies)
