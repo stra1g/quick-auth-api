@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  Server-side app providing secure authentication and authorization services for accessing protected resources or services.
+  Server-side app providing secure authentication and authorization services for accessing protected resources.
 </p>
 
 <p align="center">
