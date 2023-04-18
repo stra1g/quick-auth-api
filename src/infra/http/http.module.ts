@@ -8,6 +8,7 @@ import { SignInService } from '@app/services/sign-in/sign-in.service';
 import { AuthController } from './controllers/auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from '@infra/auth/strategies/google.strategy';
+import { GoogleSignInService } from '@app/services/google-sign-in/google-sign-in.service';
 
 @Module({
   imports: [
@@ -23,6 +24,12 @@ import { GoogleStrategy } from '@infra/auth/strategies/google.strategy';
     }),
   ],
   controllers: [UsersController, AuthController],
-  providers: [CreateUserService, SignInService, JwtStrategy, GoogleStrategy],
+  providers: [
+    CreateUserService,
+    SignInService,
+    JwtStrategy,
+    GoogleStrategy,
+    GoogleSignInService,
+  ],
 })
 export class HttpModule {}
