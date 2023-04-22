@@ -4,8 +4,8 @@ export const mailConfigs = {
     port: 587,
     secure: false,
     auth: {
-      user: process.env.ACC_EMAIL,
-      pass: process.env.ACC_PASSWORD,
+      user: process.env.ETHEREAL_EMAIL,
+      pass: process.env.ETHEREAL_PASSWORD,
     },
   },
 };
