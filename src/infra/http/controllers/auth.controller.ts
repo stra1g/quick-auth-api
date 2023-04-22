@@ -35,21 +35,24 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async create(@Body() body: SignInDto, response: Response) {
+  async create(@Body() body: SignInDto, @Res() response: Response) {
     const responseData = await this.signInService.run(body);
 
-    if (responseData.access_token)
+    if (responseData)
       return response.json({
         access_token: responseData.access_token,
       });
 
     return response.json({
-      message: 'Verification code sent to email',
+      mail_verification_required: true,
     });
   }
 
   @Post('mail/confirmation')
-  async confirmMail(@Body() body: MailConfirmationDto, response: Response) {
+  async confirmMail(
+    @Body() body: MailConfirmationDto,
+    @Res() response: Response,
+  ) {
     const { access_token } = await this.mailConfirmationService.run(body);
 
     return response.json({
