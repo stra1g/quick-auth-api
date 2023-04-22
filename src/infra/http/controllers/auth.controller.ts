@@ -32,10 +32,12 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async create(@Body() body: SignInDto) {
-    const { access_token } = await this.signInService.run(body);
+  async create(@Body() body: SignInDto, response: Response) {
+    await this.signInService.run(body);
 
-    return { access_token };
+    return response.status(200).json({
+      message: 'Verification code sent to email',
+    });
   }
 
   @Get('auth/google')

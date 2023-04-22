@@ -1,8 +1,8 @@
 import { UsersRepository } from '@app/repositories/users.repository';
 import { verifyHash } from '@helpers/hash';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { SendMailService } from '../send-mail/send-mail.service';
+import { CodesRepository } from '@app/repositories/codes.repository';
 
 interface SignInRequest {
   email: string;
@@ -13,7 +13,7 @@ interface SignInRequest {
 export class SignInService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly jwtService: JwtService,
+    private readonly codesRepository: CodesRepository,
     private readonly sendMailService: SendMailService,
   ) {}
 
@@ -26,19 +26,27 @@ export class SignInService {
 
     if (!passwordMatch) throw new NotFoundException('User not found');
 
-    const payload = { sub: foundUser.id };
+    // generate a 6 digit random number
+    const code = String(Math.floor(100000 + Math.random() * 900000));
 
-    const token = this.jwtService.sign(payload);
+    // generate a 15 minute expiration date
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 15);
+
+    await this.codesRepository.create({
+      code,
+      user_id: foundUser.id,
+      expires_at: expiresAt,
+    });
 
     this.sendMailService.run({
       to: foundUser.email,
       subject: 'Welcome to QuickAuth',
       text: 'Welcome to QuickAuth',
-      html: '<h1>Welcome to QuickAuth</h1>',
+      view: 'confirm_email.ejs',
+      viewOptions: {
+        verificationCode: code,
+        name: foundUser.first_name,
+      },
     });
-
-    return {
-      access_token: token,
-    };
   }
 }
