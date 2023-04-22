@@ -40,6 +40,10 @@ export class MailConfirmationService {
       used_at: new Date(),
     });
 
+    await this.usersRepository.edit(foundUser.id, {
+      email_verified: true,
+    });
+
     const payload = { sub: foundUser.id };
 
     const access_token = this.jwtService.sign(payload);

@@ -34,6 +34,7 @@ export class CreateUserService {
     return {
       user: {
         email: user.email,
+        email_verified: user.email_verified,
         first_name: user.first_name,
         last_name: user.last_name,
         id: user.id,
