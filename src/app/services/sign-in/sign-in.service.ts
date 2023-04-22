@@ -2,6 +2,7 @@ import { UsersRepository } from '@app/repositories/users.repository';
 import { verifyHash } from '@helpers/hash';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { SendMailService } from '../send-mail/send-mail.service';
 
 interface SignInRequest {
   email: string;
@@ -13,6 +14,7 @@ export class SignInService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
+    private readonly sendMailService: SendMailService,
   ) {}
 
   public async run({ email, password }: SignInRequest) {
@@ -27,6 +29,14 @@ export class SignInService {
     const payload = { sub: foundUser.id };
 
     const token = this.jwtService.sign(payload);
+
+    this.sendMailService.run({
+      from: 'Luís <luis.test@quickauth.com>',
+      to: foundUser.email,
+      subject: 'Welcome to QuickAuth',
+      text: 'Welcome to QuickAuth',
+      html: '<h1>Welcome to QuickAuth</h1>',
+    });
 
     return {
       access_token: token,
