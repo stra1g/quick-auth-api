@@ -31,7 +31,6 @@ export class SignInService {
     const token = this.jwtService.sign(payload);
 
     this.sendMailService.run({
-      from: 'Luís <luis.test@quickauth.com>',
       to: foundUser.email,
       subject: 'Welcome to QuickAuth',
       text: 'Welcome to QuickAuth',
