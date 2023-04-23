@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IMailProvider } from 'providers/mail/mail.interface';
+import { IMailProvider } from '@providers/mail/mail.interface';
 import * as ejs from 'ejs';
 import { join } from 'path';
 

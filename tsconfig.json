@@ -21,7 +21,8 @@
     "paths": {
       "@infra/*": ["infra/*"],
       "@helpers/*": ["helpers/*"],
-      "@app/*": ["app/*"]
+      "@app/*": ["app/*"],
+      "@providers/*": ["providers/*"]
     }
   }
 }

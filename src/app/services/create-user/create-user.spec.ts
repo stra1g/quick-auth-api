@@ -31,6 +31,7 @@ describe('Create user service', () => {
       id: randomUUID(),
       ...dto,
       password: makeHash(dto.password),
+      email_verified: false,
       created_at: new Date(),
     });
 
@@ -52,6 +53,7 @@ describe('Create user service', () => {
       id: randomUUID(),
       ...dto,
       password: makeHash(dto.password),
+      email_verified: false,
       created_at: new Date(),
     };
     const createMethod = jest.spyOn(usersRepository, 'create');
