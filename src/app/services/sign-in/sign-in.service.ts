@@ -39,6 +39,16 @@ export class SignInService {
       const payload = { sub: foundUser.id };
       const access_token = this.jwtService.sign(payload);
 
+      this.sendMailService.run({
+        to: foundUser.email,
+        subject: 'New login activity',
+        text: 'New login activity',
+        view: 'new_login_activity.ejs',
+        viewOptions: {
+          name: foundUser.first_name,
+        },
+      });
+
       return { access_token };
     }
     // generate a 6 digit random number
