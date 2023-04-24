@@ -35,6 +35,8 @@ export class MailConfirmationService {
     if (foundCode.expires_at < new Date())
       throw new BadRequestException('Code expired');
 
+    if (foundCode.used) throw new BadRequestException('Code already used');
+
     await this.codesRepository.edit(foundCode.id, {
       used: true,
       used_at: new Date(),
