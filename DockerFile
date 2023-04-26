@@ -1,0 +1,36 @@
+# Build
+FROM node:18-alpine as build
+
+WORKDIR /app
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn
+
+COPY . .
+
+RUN yarn build
+
+# Prod environment
+FROM node:18-alpine
+
+WORKDIR /app
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+COPY --from=build /app/dist ./
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/.env ./
+
+COPY package*.json ./
+
+RUN yarn --production
+
+#RUN yarn prisma generate
+RUN yarn prisma migrate deploy
+
+EXPOSE 3000
+
+CMD ["node", "src/main.js"]

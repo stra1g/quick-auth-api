@@ -1,6 +1,29 @@
 version: '3.1'
 
 services:
+  app: 
+    build: 
+      context: .
+      dockerfile: DockerFile
+    container_name: quick-auth-app
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECREY_KEY: ${JWT_SECREY_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      SENDER_EMAIL: ${SENDER_EMAIL}
+      SENDER_NAME: ${SENDER_NAME}
+      ETHEREAL_EMAIL: ${ETHEREAL_EMAIL}
+      ETHEREAL_PASSWORD: ${ETHEREAL_PASSWORD}
+    networks:
+      - app-network
   db:
     image: postgres
     container_name: quick-auth-db
@@ -15,7 +38,12 @@ services:
       - 5432
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
   db:
-    driver: local
+
+networks:
+  app-network:
+    driver: bridge

@@ -10,7 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from '@infra/auth/strategies/google.strategy';
 import { GoogleSignInService } from '@app/services/google-sign-in/google-sign-in.service';
 import { SendMailService } from '@app/services/send-mail/send-mail.service';
-import { MailModule } from 'providers/mail/mail.module';
+import { MailModule } from '@providers/mail/mail.module';
 import { MailConfirmationService } from '@app/services/mail-confirmation/mail-confirmation.service';
 
 @Module({

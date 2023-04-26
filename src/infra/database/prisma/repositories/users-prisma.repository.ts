@@ -1,4 +1,4 @@
-import { UsersRepository } from 'app/repositories/users.repository';
+import { UsersRepository } from '@app/repositories/users.repository';
 import { PrismaService } from '../prisma.service';
 import { Injectable } from '@nestjs/common';
 import {
