@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Strategy2FA {
+  email
+  otp
+}
+
 model User {
   id         String @id @default(uuid())
   first_name String
@@ -17,12 +22,13 @@ model User {
   email      String @unique
   password   String
 
-  email_verified  Boolean @default(false)
-  is_2fa_enabled  Boolean @default(false)
-  ascii_2fa       String?
-  hex_2fa         String?
-  base32_2fa      String?
-  otpauth_url_2fa String?
+  email_verified  Boolean      @default(false)
+  is_2fa_enabled  Boolean      @default(false)
+  strategy_2fa    Strategy2FA?
+  ascii_otp       String?
+  hex_otp         String?
+  base32_otp      String?
+  otpauth_url_otp String?
 
   created_at DateTime @default(now())
 

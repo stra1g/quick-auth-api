@@ -6,6 +6,7 @@ import { CodesRepository } from '@app/repositories/codes.repository';
 import { JwtService } from '@nestjs/jwt';
 import { generate2faSecrets } from '@infra/auth/2fa/generate-2fa-secrets';
 import { encrypt } from '@helpers/encrypt';
+import { Strategy2FA } from '@app/interfaces/user.interface';
 
 interface SignInRequest {
   email: string;
@@ -13,8 +14,9 @@ interface SignInRequest {
 }
 
 interface SignIn2faResponse {
-  base_32_2fa?: string;
-  otpauth_url_2fa?: string;
+  base_32_otp?: string;
+  otpauth_url?: string;
+  strategy: Strategy2FA;
 }
 
 interface SignInAccessTokenResponse {
@@ -85,22 +87,57 @@ export class SignInService {
     }
 
     if (foundUser.is_2fa_enabled) {
-      const { ascii, base32, hex, otpauth_url } = await generate2faSecrets(
-        foundUser.email,
-      );
+      if (foundUser.strategy_2fa === Strategy2FA.OTP) {
+        const { ascii, base32, hex, otpauth_url } = await generate2faSecrets(
+          foundUser.email,
+        );
 
-      await this.usersRepository.edit(foundUser.id, {
-        ascii_2fa: encrypt(ascii, process.env.BASE_32_2FA_ENCRYPTION_KEY),
-        base32_2fa: encrypt(base32, process.env.BASE_32_2FA_ENCRYPTION_KEY),
-        hex_2fa: encrypt(hex, process.env.BASE_32_2FA_ENCRYPTION_KEY),
-        otpauth_url_2fa: otpauth_url,
-      });
+        await this.usersRepository.edit(foundUser.id, {
+          ascii_otp: encrypt(ascii, process.env.BASE_32_OTP_ENCRYPTION_KEY),
+          base32_otp: encrypt(base32, process.env.BASE_32_OTP_ENCRYPTION_KEY),
+          hex_otp: encrypt(hex, process.env.BASE_32_OTP_ENCRYPTION_KEY),
+          otpauth_url_otp: otpauth_url,
+        });
 
-      return {
-        is_2fa_enabled: true,
-        is_email_verified: true,
-        data: { base_32_2fa: base32, otpauth_url_2fa: otpauth_url },
-      };
+        return {
+          is_2fa_enabled: true,
+          is_email_verified: true,
+          data: { base_32_otp: base32, otpauth_url, strategy: Strategy2FA.OTP },
+        };
+      }
+
+      if (foundUser.strategy_2fa === Strategy2FA.EMAIL) {
+        const code2FA = String(Math.floor(100000 + Math.random() * 900000));
+
+        // generate a 5 minute expiration date
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 15);
+
+        await this.codesRepository.create({
+          code: code2FA,
+          user_id: foundUser.id,
+          expires_at: expiresAt,
+        });
+
+        this.sendMailService.run({
+          to: foundUser.email,
+          subject: 'Confirm your Login',
+          text: 'Confirm your Login',
+          view: 'confirm_login_2fa.ejs',
+          viewOptions: {
+            name: foundUser.first_name,
+            code: code2FA,
+          },
+        });
+
+        return {
+          is_2fa_enabled: true,
+          is_email_verified: true,
+          data: {
+            mail_verification_required: true,
+            strategy: Strategy2FA.EMAIL,
+          },
+        };
+      }
     }
 
     const payload = { sub: foundUser.id };
