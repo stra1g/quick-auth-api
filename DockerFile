@@ -29,7 +29,7 @@ COPY package*.json ./
 RUN yarn --production
 
 #RUN yarn prisma generate
-RUN yarn prisma migrate deploy
+#RUN yarn prisma migrate deploy
 
 EXPOSE 3000
 

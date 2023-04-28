@@ -10,7 +10,7 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - db
+      - postgres
     env_file:
       - .env
     environment:
@@ -24,7 +24,7 @@ services:
       ETHEREAL_PASSWORD: ${ETHEREAL_PASSWORD}
     networks:
       - app-network
-  db:
+  postgres:
     image: postgres
     container_name: quick-auth-db
     restart: always
@@ -41,9 +41,9 @@ services:
     networks:
       - app-network
 
-volumes:
-  db:
-
 networks:
   app-network:
-    driver: bridge
+    driver: local
+
+volumes:
+  db:
