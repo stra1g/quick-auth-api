@@ -38,11 +38,7 @@ export class AuthController {
   async create(@Body() body: SignInDto, @Res() response: Response) {
     const responseData = await this.signInService.run(body);
 
-    if (responseData) return response.json(responseData);
-
-    return response.json({
-      mail_verification_required: true,
-    });
+    return response.json(responseData);
   }
 
   @Post('mail/confirmation')
