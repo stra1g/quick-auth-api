@@ -4,13 +4,19 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { SendMailService } from '../send-mail/send-mail.service';
 import { CodesRepository } from '@app/repositories/codes.repository';
 import { JwtService } from '@nestjs/jwt';
+import { generate2faSecrets } from '@infra/auth/2fa/generate-2fa-secrets';
 
 interface SignInRequest {
   email: string;
   password: string;
 }
 
-interface SignInResponse {
+interface SignIn2faResponse {
+  base_32_2fa?: string;
+  otpauth_url_2fa?: string;
+}
+
+interface SignInAccessTokenResponse {
   access_token: string;
 }
 
@@ -26,7 +32,9 @@ export class SignInService {
   public async run({
     email,
     password,
-  }: SignInRequest): Promise<SignInResponse | undefined> {
+  }: SignInRequest): Promise<
+    SignInAccessTokenResponse | SignIn2faResponse | undefined
+  > {
     const foundUser = await this.usersRepository.findByEmail(email);
 
     if (!foundUser) throw new NotFoundException('User not found');
@@ -51,6 +59,25 @@ export class SignInService {
 
       return { access_token };
     }
+
+    if (foundUser.is_2fa_enabled) {
+      const { ascii, base32, hex, otpauth_url } = await generate2faSecrets(
+        foundUser.email,
+      );
+
+      await this.usersRepository.edit(foundUser.id, {
+        ascii_2fa: ascii,
+        base32_2fa: base32,
+        hex_2fa: hex,
+        otpauth_url_2fa: otpauth_url,
+      });
+
+      return {
+        base_32_2fa: base32,
+        otpauth_url_2fa: otpauth_url,
+      };
+    }
+
     // generate a 6 digit random number
     const code = String(Math.floor(100000 + Math.random() * 900000));
 

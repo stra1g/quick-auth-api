@@ -11,13 +11,20 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  first_name     String
-  last_name      String
-  email          String   @unique
-  password       String
-  email_verified Boolean  @default(false)
-  created_at     DateTime @default(now())
+  id         String @id @default(uuid())
+  first_name String
+  last_name  String
+  email      String @unique
+  password   String
+
+  email_verified  Boolean @default(false)
+  is_2fa_enabled  Boolean @default(false)
+  ascii_2fa       String?
+  hex_2fa         String?
+  base32_2fa      String?
+  otpauth_url_2fa String?
+
+  created_at DateTime @default(now())
 
   Code Code[]
 }
