@@ -4,8 +4,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { SendMailService } from '../send-mail/send-mail.service';
 import { CodesRepository } from '@app/repositories/codes.repository';
 import { JwtService } from '@nestjs/jwt';
-import { generate2faSecrets } from '@infra/auth/2fa/generate-2fa-secrets';
-import { encrypt } from '@helpers/encrypt';
 import { Strategy2FA } from '@app/interfaces/user.interface';
 
 interface SignInRequest {
@@ -88,21 +86,10 @@ export class SignInService {
 
     if (foundUser.is_2fa_enabled) {
       if (foundUser.strategy_2fa === Strategy2FA.OTP) {
-        const { ascii, base32, hex, otpauth_url } = await generate2faSecrets(
-          foundUser.email,
-        );
-
-        await this.usersRepository.edit(foundUser.id, {
-          ascii_otp: encrypt(ascii, process.env.BASE_32_OTP_ENCRYPTION_KEY),
-          base32_otp: encrypt(base32, process.env.BASE_32_OTP_ENCRYPTION_KEY),
-          hex_otp: encrypt(hex, process.env.BASE_32_OTP_ENCRYPTION_KEY),
-          otpauth_url_otp: otpauth_url,
-        });
-
         return {
           is_2fa_enabled: true,
           is_email_verified: true,
-          data: { base_32_otp: base32, otpauth_url, strategy: Strategy2FA.OTP },
+          data: { strategy: Strategy2FA.OTP },
         };
       }
 
@@ -133,7 +120,6 @@ export class SignInService {
           is_2fa_enabled: true,
           is_email_verified: true,
           data: {
-            mail_verification_required: true,
             strategy: Strategy2FA.EMAIL,
           },
         };
