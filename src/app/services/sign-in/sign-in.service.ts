@@ -5,6 +5,7 @@ import { SendMailService } from '../send-mail/send-mail.service';
 import { CodesRepository } from '@app/repositories/codes.repository';
 import { JwtService } from '@nestjs/jwt';
 import { generate2faSecrets } from '@infra/auth/2fa/generate-2fa-secrets';
+import { encrypt } from '@helpers/encrypt';
 
 interface SignInRequest {
   email: string;
@@ -89,9 +90,9 @@ export class SignInService {
       );
 
       await this.usersRepository.edit(foundUser.id, {
-        ascii_2fa: ascii,
-        base32_2fa: base32,
-        hex_2fa: hex,
+        ascii_2fa: encrypt(ascii, process.env.BASE_32_2FA_ENCRYPTION_KEY),
+        base32_2fa: encrypt(base32, process.env.BASE_32_2FA_ENCRYPTION_KEY),
+        hex_2fa: encrypt(hex, process.env.BASE_32_2FA_ENCRYPTION_KEY),
         otpauth_url_2fa: otpauth_url,
       });
 
