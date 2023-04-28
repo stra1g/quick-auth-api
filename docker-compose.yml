@@ -43,7 +43,7 @@ services:
 
 networks:
   app-network:
-    driver: local
+    driver: bridge
 
 volumes:
   db:
