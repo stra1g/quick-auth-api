@@ -1,10 +1,10 @@
-import { UsersRepository } from '@app/repositories/users.repository';
 import { verifyHash } from '@helpers/hash';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SendMailService } from '../send-mail/send-mail.service';
 import { CodesRepository } from '@app/repositories/codes.repository';
 import { JwtService } from '@nestjs/jwt';
 import { Strategy2FA } from '@app/interfaces/user.interface';
+import { UsersRepository } from '@app/repositories/users.repository';
 
 interface SignInRequest {
   email: string;

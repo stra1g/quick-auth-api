@@ -33,6 +33,12 @@ describe('Create user service', () => {
       password: makeHash(dto.password),
       email_verified: false,
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
 
     expect(() => service.run(dto)).rejects.toThrowError();
@@ -55,6 +61,12 @@ describe('Create user service', () => {
       password: makeHash(dto.password),
       email_verified: false,
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     };
     const createMethod = jest.spyOn(usersRepository, 'create');
     usersRepository.create.mockResolvedValue(mockUserReturn);

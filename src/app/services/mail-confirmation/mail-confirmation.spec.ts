@@ -57,6 +57,12 @@ describe('Mail confirmation service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     codesRepository.findByCodeAndUser.mockResolvedValue(undefined);
 
@@ -80,6 +86,12 @@ describe('Mail confirmation service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
     codesRepository.findByCodeAndUser.mockResolvedValue({
@@ -112,6 +124,12 @@ describe('Mail confirmation service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     const thirtyMinutesAfter = new Date(Date.now() + 30 * 60 * 1000);
     codesRepository.findByCodeAndUser.mockResolvedValue({
@@ -144,6 +162,12 @@ describe('Mail confirmation service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     const thirtyMinutesAfter = new Date(Date.now() + 30 * 60 * 1000);
     codesRepository.findByCodeAndUser.mockResolvedValue({

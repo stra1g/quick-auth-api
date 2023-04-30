@@ -62,6 +62,12 @@ describe('Sign in service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
 
     expect(() =>
@@ -83,19 +89,30 @@ describe('Sign in service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     jest.spyOn(codesRepository, 'create');
     jest.spyOn(sendMailService, 'run');
     jwtService.sign.mockReturnValue(randomBytes(16).toString('hex'));
 
-    const response = await service.run({ email, password });
+    const { data, is_2fa_enabled, is_email_verified } = await service.run({
+      email,
+      password,
+    });
 
-    expect(response).toBeUndefined();
+    expect(is_2fa_enabled).toBeFalsy();
+    expect(is_email_verified).toBeFalsy();
+    expect(data).toHaveProperty('mail_verification_required');
     expect(codesRepository.create).toBeCalledTimes(1);
     expect(sendMailService.run).toBeCalledTimes(1);
   });
 
-  it('should be able to sign in if email is already verified', async () => {
+  it('should be able to sign in if email is already verified and 2fa is not enabled', async () => {
     const password = 'AAaa123456#';
     const email = 'tester@test.com';
     usersRepository.findByEmail.mockResolvedValue({
@@ -106,12 +123,22 @@ describe('Sign in service', () => {
       first_name: 'Tester',
       last_name: 'Test',
       created_at: new Date(),
+      ascii_otp: null,
+      base32_otp: null,
+      is_2fa_enabled: false,
+      hex_otp: null,
+      otpauth_url_otp: null,
+      strategy_2fa: null,
     });
     jwtService.sign.mockReturnValue(randomBytes(16).toString('hex'));
 
-    const { access_token } = await service.run({ email, password });
+    const { data, is_2fa_enabled, is_email_verified } = await service.run({
+      email,
+      password,
+    });
 
-    expect(access_token).toBeTruthy();
-    expect(typeof access_token).toBe('string');
+    expect(is_2fa_enabled).toBeFalsy();
+    expect(is_email_verified).toBeTruthy();
+    expect(data).toHaveProperty('access_token');
   });
 });

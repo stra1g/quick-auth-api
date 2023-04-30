@@ -22,6 +22,7 @@
       "@infra/*": ["src/infra/*"],
       "@helpers/*": ["src/helpers/*"],
       "@app/*": ["src/app/*"],
+      "@modules/*": ["src/app/modules/*"],
       "@providers/*": ["src/providers/*"]
     }
   }

@@ -37,6 +37,8 @@ export class CreateUserService {
         email_verified: user.email_verified,
         first_name: user.first_name,
         last_name: user.last_name,
+        is_2fa_enabled: user.is_2fa_enabled,
+        strategy_2fa: user.strategy_2fa,
         id: user.id,
       },
     };

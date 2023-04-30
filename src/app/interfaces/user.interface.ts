@@ -24,7 +24,15 @@ export enum Strategy2FA {
   EMAIL = 'email',
 }
 
-export type UsersOutputWithoutSensitive = Omit<User, 'password' | 'created_at'>;
+export type UsersOutputWithoutSensitive = Omit<
+  User,
+  | 'password'
+  | 'created_at'
+  | 'ascii_otp'
+  | 'hex_otp'
+  | 'base32_otp'
+  | 'otpauth_url_otp'
+>;
 
 export type EditUsersInput = Partial<
   Pick<
