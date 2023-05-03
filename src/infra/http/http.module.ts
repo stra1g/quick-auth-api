@@ -12,6 +12,8 @@ import { GoogleSignInService } from '@app/services/google-sign-in/google-sign-in
 import { SendMailService } from '@app/services/send-mail/send-mail.service';
 import { MailModule } from '@providers/mail/mail.module';
 import { MailConfirmationService } from '@app/services/mail-confirmation/mail-confirmation.service';
+import { VerifyOTPService } from '@app/services/verify-otp/verify-otp.service';
+import { ValidateOTPService } from '@app/services/validate-otp/validate-otp.service';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { MailConfirmationService } from '@app/services/mail-confirmation/mail-co
     GoogleSignInService,
     SendMailService,
     MailConfirmationService,
+    VerifyOTPService,
+    ValidateOTPService,
   ],
 })
 export class HttpModule {}

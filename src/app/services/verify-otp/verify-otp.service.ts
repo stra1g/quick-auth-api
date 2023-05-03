@@ -1,5 +1,5 @@
 import { UsersRepository } from '@app/repositories/users.repository';
-import { verifyToken } from '@infra/auth/2fa/verify-token';
+import { verifyToken } from '@infra/auth/2fa/verify-2fa-token';
 import {
   BadRequestException,
   Injectable,
@@ -20,13 +20,12 @@ export class VerifyOTPService {
 
     if (!foundUser) throw new NotFoundException('User not found');
 
-    const isTokenValid = verifyToken(token, foundUser.base32_2fa);
+    const isTokenValid = verifyToken(token, foundUser.base32_otp);
 
     if (!isTokenValid) throw new BadRequestException('Invalid token');
 
     return {
       otp_verified: true,
-      user_id: foundUser.id,
     };
   }
 }
