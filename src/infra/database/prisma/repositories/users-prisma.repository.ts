@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateUsersInput,
   EditUsersInput,
-  User,
 } from '@app/interfaces/user.interface';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
@@ -21,6 +21,14 @@ export class PrismaUsersRepository implements UsersRepository {
     return this.prismaService.user.findFirst({
       where: {
         email,
+      },
+    });
+  }
+
+  async findById(id: string): Promise<User | undefined> {
+    return this.prismaService.user.findUnique({
+      where: {
+        id,
       },
     });
   }
